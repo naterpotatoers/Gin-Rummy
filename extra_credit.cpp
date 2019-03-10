@@ -6,39 +6,40 @@
 #include"gin_rummy.h"
 using namespace std;
 
-void whoseTurn(bool);
-void playerOptions(bool, List<Card>*, Queue<Card>&, Stack<Card>&);
-void execute(bool, List<Card>*, Queue<Card>&, Stack<Card>&, bool&);
-void discardDecision(bool, List<Card>*, Stack<Card>&, bool&);
-void checkWinCondition(bool, List<Card>*, bool&);
-void checkWinCondition(bool,List<Card>, bool&);
-void endTurn(bool&);
-
+void whoseTurn();
+void playerOptions(List<Card>*, Queue<Card>&, Stack<Card>&);
+void execute(List<Card>*, Queue<Card>&, Stack<Card>&, bool&);
+void discardDecision(List<Card>*, Stack<Card>&, bool&);
+void checkWinCondition(List<Card>*, bool&);
+//void checkWinCondition(List<Card>, bool&);
+void endTurn();
 
 Card takenFromDiscard;
 bool boolTakenFromDiscard = false;
+bool turnSwap = true;
 
 int main(){
-    bool winCondition = false;
-	bool turnSwap = true;
-	bool wasDiscarded = false;
-    string input;
-    Queue<Card> deck;// QUEUE = DECK
-    Stack<Card> discard;// STACK = DISCARD
-    List<Card> hands[2];// LIST = HAND
+    	bool winCondition = false;
+    	bool wasDiscarded = false;
+   	string input;
+    	Queue<Card> deck;// QUEUE = DECK
+    	Stack<Card> discard;// STACK = DISCARD
+    	List<Card> hands[2];// LIST = HAND
 	List<Card> test;
-    vector<string> temp =  {
-							"As", "2s", "3s", "4s", "5s", "6s", "7s", "8s", "9s", "10s", "Js", "Qs", "Ks",
-                            "Ah", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "Jh", "Qh", "Kh",
-                            "Ac", "2c", "3c", "4c", "5c", "6c", "7c", "8c", "9c", "10c", "Jc", "Qc", "Kc",
-                            "Ad", "2d", "3d", "4d", "5d", "6d", "7d", "8d", "9d", "10d", "Jd", "Qd", "Kd",
-							};
-  random_shuffle(temp.begin(), temp.end());   //Randomly shuffles deck;
+    	vector<string> temp =  {
+			"As", "2s", "3s", "4s", "5s", "6s", "7s", "8s", "9s", "10s", "Js", "Qs", "Ks",
+                       	"Ah", "2h", "3h", "4h", "5h", "6h", "7h", "8h", "9h", "10h", "Jh", "Qh", "Kh",
+                       	"Ac", "2c", "3c", "4c", "5c", "6c", "7c", "8c", "9c", "10c", "Jc", "Qc", "Kc",
+                       	"Ad", "2d", "3d", "4d", "5d", "6d", "7d", "8d", "9d", "10d", "Jd", "Qd", "Kd",
+    };
+  
+	random_shuffle(temp.begin(), temp.end());   //Randomly shuffles deck;
 
     for(string s:temp){
         Card c(s);
         deck.push(c); 
     }
+
 	for(int i = 0; i < 10; i++){
 		hands[1].push_back(deck.pop());
 		hands[0].push_back(deck.pop());
@@ -46,20 +47,19 @@ int main(){
 	discard.push(deck.pop());
 
     cout<<"Gin Rummy CSCI 41 Assignment"<<endl<<endl;
-	while(winCondition == false){
-		whoseTurn(turnSwap);
-	   	playerOptions(turnSwap, hands, deck, discard);
-	   	execute(turnSwap, hands, deck, discard, wasDiscarded);
-	   	discardDecision(turnSwap, hands, discard, wasDiscarded);
-	    checkWinCondition(turnSwap, hands, winCondition);
+	while(!winCondition){
+		whoseTurn();
+	   	playerOptions(hands, deck, discard);
+	   	execute(hands, deck, discard, wasDiscarded);
+	   	discardDecision(hands, discard, wasDiscarded);
+		checkWinCondition(hands, winCondition);
 		turnSwap = !turnSwap;
 	}
-
 	return 0;
 }
 
-void whoseTurn(bool turnSwap){
-	for(int i = 0; i < 30; i++){
+void whoseTurn(){	//couts simple statement, waits for user response
+	for(int i = 0; i < 60; i++){
 		 cout<<endl;
 	}
 	cout<<"Player "<<turnSwap<<"'s Turn"<<endl;
@@ -67,7 +67,7 @@ void whoseTurn(bool turnSwap){
 	cin.get();
 }
 
-void playerOptions(bool turnSwap, List<Card>* hands, Queue<Card>& deck, Stack<Card>& discard){
+void playerOptions(List<Card>* hands, Queue<Card>& deck, Stack<Card>& discard){ //
 	if(boolTakenFromDiscard)
         cout<<"Player "<<!turnSwap<<" took the "<<takenFromDiscard<<" from the discard pile and discarded the "<<discard.peek()<<"."<<endl<<endl;
     else if(!boolTakenFromDiscard)
@@ -82,7 +82,7 @@ void playerOptions(bool turnSwap, List<Card>* hands, Queue<Card>& deck, Stack<Ca
 
 }
 
-void execute(bool turnSwap, List<Card>* hands, Queue<Card>& deck, Stack<Card>& discard, bool& wasDiscarded){
+void execute(List<Card>* hands, Queue<Card>& deck, Stack<Card>& discard, bool& wasDiscarded){
 	string takeDeckDisc;
 	cout<<"> ";
 	cin>>takeDeckDisc;
@@ -90,18 +90,18 @@ void execute(bool turnSwap, List<Card>* hands, Queue<Card>& deck, Stack<Card>& d
 		hands[turnSwap].push_front(deck.pop());
 	}
 	else if(takeDeckDisc == "U" or takeDeckDisc == "u"){
-		takenFromDiscard = discard.pop();
+		takenFromDiscard = discard.pop();	//global card
 		hands[turnSwap].push_front(takenFromDiscard);
 		wasDiscarded = true;
-		boolTakenFromDiscard = true;
+		boolTakenFromDiscard = true;	//global bool
 	}
-	else{
+	else{	//recursively call execute if invalid input, might need to change to prevent stack overflow... 
 		cout<<"Invalid Input - Please Input Either 'D' or 'U'"<<endl;
-		execute(turnSwap, hands, deck, discard, wasDiscarded);
+		execute(hands, deck, discard, wasDiscarded);
 	}
 }
 
-void discardDecision(bool turnSwap, List<Card>* hands, Stack<Card>& discard, bool& wasDiscarded){
+void discardDecision(List<Card>* hands, Stack<Card>& discard, bool& wasDiscarded){
     string input;
     Card remove;
     int indexNum = -1;
@@ -110,11 +110,11 @@ void discardDecision(bool turnSwap, List<Card>* hands, Stack<Card>& discard, boo
         cin>>input;
         remove.parse(input);
         indexNum = hands[turnSwap].find(remove);
-        if(indexNum == 1 and wasDiscarded){
+        if(indexNum == 1 and wasDiscarded){	//if player tries to discard card just pulled from discard pile
             cout<<"Invalid Input - Cannot Discard Card From Discard."<<endl;
             indexNum = -1;
         }
-        else if(indexNum == -1){
+        else if(indexNum == -1){	//player attempts invalid input
             cout<<"Invalid Input - Card Not Found."<<endl;
         }
     }
@@ -145,7 +145,7 @@ void bitParser(string sTemp, bitset<13>& spades, bitset<13>& diamonds, bitset<13
             tempValue[3] = 1;
             break;
         case '5':
-			tempValue[4] = 1;
+		tempValue[4] = 1;
             break;
         case '6':
             tempValue[5] = 1;
@@ -195,16 +195,16 @@ int check_runs(bitset<13>currSuit){
 	int i = 0;
 	while(i < 13){
 //all possible run combinations
-	bitset<13> check7 = 7;
-	bitset<13> check15 = 15;
-	bitset<13> check31 = 31;
+	bitset<13> check7 = 7;	//111 b2 equiv
+	bitset<13> check15 = 15;	//1111
+	bitset<13> check31 = 31;	//11111
 	bitset<13> check63 = 63;
 	bitset<13> check127 = 127;
 	bitset<13> check255 = 255;
 	bitset<13> check511 = 511;
 	bitset<13> check1023 = 1023;
-//Compares the runs with current hand
-	check7 &= currSuit;
+//Compares the runs with current hand(spades, diam...)
+	check7 &= currSuit;	
 	check15 &= currSuit;
 	check31 &= currSuit;
 	check63 &= currSuit;
@@ -268,19 +268,48 @@ int check_runs(bitset<13>currSuit){
 	return totalCardsUsed;
 }
 
-int check_melds(bitset<13> s, bitset<13> d, bitset<13> c, bitset<13> h){
+int check_melds(bitset<13> s, bitset<13> d, bitset<13> c, bitset<13> h){	
+//checks for melds by ANDing at least 3 suits together. 
+//If a meld exists then a 1 will appear in set
+//If no melds exists then the whole set will be 0s
 	int totalCardsUsed = 0;
-	int i = 0;
-	while(i < 13){
+	bitset<13> firstDigitCheck = 1;	//need this bit to avoid bug of having multiple melds causing bug 
+ 	bitset<13> sdc = s & d & c;
+        bitset<13> sdh = s & d & h;
+        bitset<13> dch = d & c & h;
+        bitset<13> sch = s & c & h;
+        bitset<13> shcd = s & h & c & d;
+	if(sdc == 0 && sdh == 0 && dch == 0 && sch == 0 && shcd == 0)
+		return 0;
+        for( int i = 0; i < 13; i++){
+//ANDs the meld suit with bitset who only has nonzero digit at beggining 
+//then shifts the bitset one by one checking all possible combinations for 1
+//if 1 is found, add 3 or 4 to int totalCardsUsed
+//		cout<<"i value: "<<i<<endl;
 		bitset<13> sdc = s & d & c;
-		bitset<13> sdh = s & d & h;
-		bitset<13> dch = d & c & h;
-		bitset<13> sch = s & c & h;
-		if(sdc == 1 and sdh == 1 and dch == 1 and sch == 1){
+        	bitset<13> sdh = s & d & h;
+	        bitset<13> dch = d & c & h;
+        	bitset<13> sch = s & c & h;
+	        bitset<13> shcd = s & h & c & d;
+		bitset<13> m4shcd = shcd & firstDigitCheck;
+		bitset<13> m3sdc = sdc & firstDigitCheck;
+		bitset<13> m3sdh = sdh & firstDigitCheck;
+		bitset<13> m3dch = dch & firstDigitCheck;
+		bitset<13> m3sch = sch & firstDigitCheck;
+	
+/*
+ * validating purposes
+		cout<<"m4: "<<m4shcd<<endl;
+		cout<<"sdc: "<<m3sdc<<endl;
+		cout<<"sdh: "<<m3sdh<<endl;
+		cout<<"dch: "<<m3dch<<endl;
+		cout<<"sch: "<<m3sch<<endl;
+*/
+		if(m4shcd== 1){
 			cout<<"meld of 4 found at bit "<<i<<endl;
-			totalCardsUsed += 3;
+			totalCardsUsed += 4;
 		}
-		else if(sdc == 1 or sdh == 1 or dch == 1 or sch == 1){
+		else if(m3sdc == 1 or m3sdh == 1 or m3dch == 1 or m3sch == 1){
 			totalCardsUsed += 3;
 			cout<<"meld of 3 found at bit "<<i<<endl;
 		}
@@ -288,28 +317,48 @@ int check_melds(bitset<13> s, bitset<13> d, bitset<13> c, bitset<13> h){
 		d >>= 1;
 		c >>= 1;
 		h >>= 1;
-		i++;
 	}
 	return totalCardsUsed;
 }
 
 //does the condition statements for winning
-void checkWinCondition(bool turnSwap, List<Card>* hands, bool& winCondition){
+void checkWinCondition(List<Card>* hands, bool& winCondition){
 	int sumOfCards = 0;
 	int i = 0;
 	bitset<13> s, d, c, h;	
 	Card currCard;
 	Node<Card>* currCardPtr = hands[turnSwap].firstNode();
-	while(i < 10){	//need to make the cards into bits by suit
- 		currCard = currCardPtr->data;
-		bitParser(currCard.to_string(), s, d, c, h);
-		currCardPtr = currCardPtr->next;
+	while(i < 10){	//translates the card value into bitset values
+ 		currCard = currCardPtr->data;	//gets the value of the card i.e "Ks"
+		bitParser(currCard.to_string(), s, d, c, h); //sends to funcion to be assigned bitset
+		currCardPtr = currCardPtr->next;	//moves to next card in hand
 		i++;
 	}
+	//removes any cards that aren't in a meld of at least three
+	bitset<13> sdc = s & d & c;
+	bitset<13> sdh = s & d & h;
+	bitset<13> sch = s & c & h;
+	bitset<13> dch = d & c & h;
+	bitset<13> sdch = s & d & c & h;
 	bitset<13>total = s|d|c|h;
+//	cout<<"Combination of Melds"<<endl<<"sdc: "<<sdc<<endl<<"sdh: "<<sdh<<endl<<"sch: "<<sch<<endl<<"dch: "<<dch<<endl<<endl<<"sdch: "<<sdch<<endl;
 	cout<<"The Binary Representation of Player Hand by Suit & Combined"<<endl<<"s: "<<s<<endl<<"d: "<<d<<endl<<"c: "<<c<<endl<<"h: "<<h<<endl<<endl<<"T: "<<total<<endl;
 
 	sumOfCards += check_melds(s, d, c, h);
+	//removes melds from runs to prevent double counting bug
+	//does this by XORing the suit by bitset that contains only the melds
+	h ^= sch;
+	h ^= sdh;
+	h ^= dch;
+	s ^= sdc;
+	s ^= sdh;
+	s ^= sch;
+	d ^= sdc;
+        d ^= sdh;
+        d ^= dch;
+        c ^= sdc;
+        c ^= sch;
+        c ^= dch;
 	sumOfCards += check_runs(s); 
 	sumOfCards += check_runs(d);
 	sumOfCards += check_runs(c);
