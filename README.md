@@ -6,9 +6,8 @@ stacks and queues through the boardgame Gin Rummy.
 
 gin_rummy.h contains a lot of the game functionality 
 
-main.cpp lacks the full version of the game as it only
-fulfills the courses requirements.
+main.cpp is the version that I submitted for my assignment.
 
-main_full.cpp is the complete game with win conditions.
+main_full.cpp is the complete game with win condition checking using the bitset library.
 This was not apart of the assignment. Nor was it extra credit
 as I had thought previously.
