@@ -1,13 +1,9 @@
-# Gin_Rummy
+# Gin Rummy
 Class Assignment for Fall 2018. 
 
-The assignment was designed to help us better understand 
-stacks and queues through the boardgame Gin Rummy.
+The assignment was designed to help us better understand stacks and queues through the boardgame Gin Rummy.
 
-gin_rummy.h contains a lot of the game functionality 
+gin_rummy.h and main.cpp contain just the basic game functionality without win condition checking.
 
-main.cpp is the version that I submitted for my assignment.
-
-main_full.cpp is the complete game with win condition checking using the bitset library.
-This was not apart of the assignment. Nor was it extra credit
-as I had thought previously.
+### H3 main_full is the complete game.
+I did this on my own outside of class using the bitset library. I mapped playing cards to a binary value and preformed BitWise operations to check for melds and runs.
