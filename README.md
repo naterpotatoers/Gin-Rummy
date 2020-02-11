@@ -1,5 +1,5 @@
 # Gin Rummy
-Class Assignment for Fall 2018. 
+Class Assignment for Fall 2018. Added win condition checking. 
 
 The assignment was designed to help us better understand stacks and queues through the boardgame Gin Rummy.
 
