@@ -1,9 +1,4 @@
-#include <random>
-#include <algorithm>
-#include <vector>
 #include <string>
-#include <stack>
-#include <queue>
 
 class Card
 {
@@ -42,6 +37,9 @@ public:
     {
         parse(input);
     }
+
+    void cardToBinary();
+
     void parse(std::string input)
     {
         char first = input.at(0);
