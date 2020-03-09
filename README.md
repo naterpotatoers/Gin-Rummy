@@ -1,6 +1,8 @@
 # Gin Rummy
 Class Assignment for Fall 2018. Added win condition checking. 
 
+![](GinRummyTerminal.png)
+
 The assignment was designed to help us better understand stacks and queues through the boardgame Gin Rummy.
 
 gin_rummy.h and main.cpp contain just the basic game functionality without win condition checking.
